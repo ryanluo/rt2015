@@ -33,8 +33,8 @@ void RayFile::raytrace (Image* image)
     Camera* camera = this->camera;
     float D = 0.5 * imageHeight / tan(camera->getHalfHeightAngle()/180*M_PI);
     Point3d origin = camera->getPos();
-    Point3d leftCorner = origin + D * camera->getDir() + (imageHeight/2) * camera->getUp() - (imageWidth/2) * camera->getRight();
     Point3d center = origin + D * camera->getDir();
+    Point3d leftCorner = center + (imageHeight/2) * camera->getUp() - (imageWidth/2) * camera->getRight();
     
 	// for printing progress to stderr...
 	double nextMilestone = 1.0;
@@ -57,6 +57,7 @@ void RayFile::raytrace (Image* image)
             Point3d pixel = leftCorner + ((double) i + .5) * camera->getRight() - ((double) j + 0.5) * camera->getUp();
             Point3d difference = pixel - origin;
             Vector3d pixelV = ((double) 1/distance(difference))*((Vector3d) (pixel - origin));
+
             Rayd theRay(origin, pixelV);
 			// get the color at the closest intersection point
 

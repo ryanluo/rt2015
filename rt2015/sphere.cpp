@@ -52,7 +52,6 @@ double Sphere::intersect (Intersection& intersectionInfo)
     
     
     double determ = 4*sqr(u.dot(v)) - 4*v.dot(v)*(u.dot(u) - sqr(this->radius));
-    cout  << determ << endl;
     if (determ >= 0) {
         double alpha1 = (2 * (u.dot(v)) + sqrt(determ))/(2*v.dot(v));
         double alpha2 = (2 * (u.dot(v)) - sqrt(determ))/(2*v.dot(v));
@@ -60,8 +59,8 @@ double Sphere::intersect (Intersection& intersectionInfo)
     }
 
     if (alpha < 0) return alpha = -1;
+    intersectionInfo.material = this->material;
     return alpha;
-
 }
 
 
