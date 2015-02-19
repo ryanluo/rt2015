@@ -34,6 +34,32 @@ double Triangle::intersect (Intersection& intersectionInfo)
     // (2) test if intersection point is in triangle
     // (3) compute distance from start of ray to intersection point & normal in direction of incoming ray
 
+    Vector3d v = intersectionInfo.theRay.getDir();
+    Vector3d u = this->v[0] - intersectionInfo.theRay.getPos();
+    Vector3d n = this->n;
+
+    if (n.dot(v) == 0) return -1;
+    
+    double alpha = n.dot(u) / n.dot(v);
+    
+    Vector3d w1 = this->v[1] - this->v[0];
+    Vector3d w2 = this->v[2] - this->v[0];
+    
+    double c = (alpha * v - u).dot(w1);
+    double e = (alpha * v - u).dot(w2);
+    double a = w1.dot(w1);
+    double b = w1.dot(w2);
+    double d = w2.dot(w2);
+    
+    double gamma = (c*b-a*e)/(-a*d+sqr(b));
+    double beta = (c - gamma * b) / a;
+    
+    if (beta >= 0 && gamma >= 0 && beta + gamma <= 1) {
+        intersectionInfo.material = this->material;
+        intersectionInfo.normal = n;
+        intersectionInfo.textured = this->textured;
+        return alpha;
+    }
 	return -1;
 }
 

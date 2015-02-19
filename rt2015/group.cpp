@@ -38,9 +38,10 @@ double Group::intersect (Intersection& intersectionInfo)
     // RAY_CASTING TODO (Transformations)
     // transform localInfo.theRay into local coordinates
     // RAY_CASTING TODO (Transformations)
-    
-    
-    
+
+    localInfo.theRay.setPos(this->transform.multPos(localInfo.theRay.getPos()));
+    Vector3d newDir = this->transform.multDir(localInfo.theRay.getDir());
+    localInfo.theRay.setDir(1./newDir.dot(newDir) * newDir);
     
     // alpha is the distance to the closest intersection point we've found
     double alpha=-1;
@@ -65,6 +66,8 @@ double Group::intersect (Intersection& intersectionInfo)
         if (currDist < alpha || alpha < 0) {
             alpha = currDist;
             localInfo.material = tempInfo.material;
+            localInfo.normal = tempInfo.normal;
+            localInfo.textured = tempInfo.textured;
         }
 	}
 
@@ -74,7 +77,13 @@ double Group::intersect (Intersection& intersectionInfo)
     // (be sure to renormalize normal vector!)
     // recompute alpha in parent's coordinate system
     // RAY_CASTING TODO (sphere/triangle intersection and transformation)
-    intersectionInfo.material = localInfo.material;
+    if (alpha > -1) {
+        intersectionInfo.material = localInfo.material;
+        Vector3d normalTrans = localInfo.normal;
+        intersectionInfo.normal = normalTrans;
+        intersectionInfo.normal = 1./ intersectionInfo.normal.dot(intersectionInfo.normal) * intersectionInfo.normal;
+        intersectionInfo.textured = localInfo.textured;
+    }
     return alpha;
 }
 
