@@ -41,6 +41,7 @@ double Group::intersect (Intersection& intersectionInfo)
     
     
     
+    
     // alpha is the distance to the closest intersection point we've found
     double alpha=-1;
 
@@ -57,11 +58,14 @@ double Group::intersect (Intersection& intersectionInfo)
 
 		// Distance for the current object
 		double currDist = (*sg)->intersect(tempInfo);
-        alpha = currDist;
 
         // RAY_CASTING TODO (Intersection)
 		// In case of a new closest intersection, update alpha a localInfo
         // RAY_CASTING TODO (Intersection)
+        if (currDist < alpha || alpha < 0) {
+            alpha = currDist;
+            localInfo.material = tempInfo.material;
+        }
 	}
 
     // RAY_CASTING TODO (sphere/triangle intersection and transformation)
@@ -70,7 +74,7 @@ double Group::intersect (Intersection& intersectionInfo)
     // (be sure to renormalize normal vector!)
     // recompute alpha in parent's coordinate system
     // RAY_CASTING TODO (sphere/triangle intersection and transformation)
-
+    intersectionInfo.material = localInfo.material;
     return alpha;
 }
 
