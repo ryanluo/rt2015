@@ -1,0 +1,73 @@
+#version HMCCS155FALL2005
+
+// deep blue background
+#background   0.0  0.0  0.3
+
+
+
+// default camera
+#camera
+	    0.0     0.0     0.0 // position
+	    0.0     0.0     -1.0 // facing
+	    0.0     1.0     0.0 // up
+	    30.0                // heightAngle
+
+#light_dir -n DirectionalLight1 --
+	1.0	1.0	1.0	// color
+	-1.0	-1.0	-1.0	// direction
+
+
+#material -n white  --
+	    0.0     0.0     0.0 // ambient
+	    1.0     1.0     1.0 // diffuse
+	    0.0     0.0     0.0 // specular
+	    0.0     0.0     0.0 // emissive
+	    0.0     0.0         // kspec    ktrans
+	    1.0                 // refind
+
+
+
+
+#group_begin -n firstGroup --
+#rotate 45 0 0 1 
+#translate 0 0 -10
+
+#group_begin -n secondGroup --
+#scale 2 1 1
+#sphere -m white --
+	    0.0     0.0     0.0 // position
+	    1.0                 // radius
+#group_end
+
+#group_begin -n thirdGroup --
+#rotate 45 0 0 1 
+#scale 2 1 1
+#sphere -m white --
+	    0.0     0.0     0.0 // position
+	    1.0                 // radius
+#group_end
+
+#group_begin -n fourthGroup --
+#rotate 90 0 0 1 
+#scale 2 1 1
+#sphere -m white --
+	    0.0     0.0     0.0 // position
+	    1.0                 // radius
+
+
+#group_end
+
+#group_begin -n fifthGroup --
+#rotate 135 0 0 1 
+#scale 2 1 1
+#sphere -m white --
+	    0.0     0.0     0.0 // position
+	    1.0                 // radius
+#group_end
+
+
+
+#group_end
+
+
+#rayfile_end
