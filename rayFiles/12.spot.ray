@@ -1,0 +1,41 @@
+#version HMCCS155FALL2002
+
+/*
+ * single spot light pointing at a triangle and a sphere.  should see
+ * specular highlights on both.  also, cutoff of spotlight should
+ * be clearly visible.
+ */
+
+#background	0.0 0.0 0.0
+#ambient	0.0 0.0 0.0
+
+#camera
+	-3.0	0.0	0.0	// position
+	1.0	0.0	0.0	// facing
+	0.0	1.0	0.0	// up
+	30.0			// heightAngle
+
+#light_spot -n SpotLight1 --
+	1.0	1.0	1.0	// color
+	-10.0	0.0	0.0	// position
+	1.0	0.0	0.0	// direction
+	1.0	0.0	0.0	// const, linear, quad attenuation
+	8.0	0.5		// cutoff dropoff
+
+#material -n mSimple --
+	0.1	0.6	0.3	// ambient
+	0.1	0.6	0.3	// diffuse
+	1.0	1.0	1.0	// specular
+	0.0	0.0	0.0	// emissive
+	0.9	0.0	1.0	// kspec ktrans refind
+
+#sphere -n Sphere1 -m mSimple --
+	2.0	0.0	-1.5	// position
+	1.0			// radius
+
+#triangle -n Triangle1 -m mSimple --
+	1.0	0.0	0.0	// v0
+	1.0	-1.0	1.5	// v1
+	1.0	1.0	1.5	// v2
+
+#rayfile_end

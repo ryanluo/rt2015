@@ -1,0 +1,54 @@
+#version HMCCS155FALL2002
+
+/*
+ * two point lights on sphere and triangle.  should see specular 
+ * highlight on sphere, but not triangle.  both should be mostly lit.
+ * 
+ */
+
+#background	0.0 0.0 0.0
+#ambient	0.0 0.0 0.0
+
+#camera
+	0.0	0.0	1.0	// position
+	0.0	0.0	-1.0	// facing
+	0.0	1.0	0.0	// up
+	30.0			// heightAngle
+
+//#ambient
+//1.0 1.0 1.0 //color
+
+#light_point -n PointLight1 --
+	1.0	1.0	1.0	// color
+	0.0 	-1.0	-1.0	// position
+	1.0	0.5	0.0 	// attenuation
+
+#light_point -n PointLight2 --
+	1.0	1.0	1.0	// color
+	0.5 	1.75	-2.0	// position
+	1.0	0.0	0.0 	// attenuation
+
+#material -n mMatteBlue --
+	0.0	0.0	0.0	// ambient
+	0.1	0.1	0.8	// diffuse
+	0.0	0.0	0.0	// specular
+	0.0	0.0	0.0	// emissive
+	0.0	0.0	1.0	// kspec ktrans refind
+
+#material -n mShinyRed --
+	0.0	0.0	0.0	// ambient
+	1.0	0.0	0.0	// diffuse
+	1.0	1.0	1.0	// specular
+	0.0	0.0	0.0	// emissive
+	0.5	0.0	1.0	// kspec ktrans refind
+
+#sphere -n Sphere1 -m mShinyRed --
+	0.5	0.5	-2.5	// position
+	1.0			// radius
+
+#triangle -n Triangle1 -m mMatteBlue --
+	1.0	-1.2	-5.0	// v0
+	0.0	-2.2	-1	// v1
+	-3.0	1.2	-3	// v2
+
+#rayfile_end

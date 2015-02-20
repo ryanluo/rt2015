@@ -1,0 +1,45 @@
+#version HMCCS155FALL2002
+
+/*
+ * texture test
+ *  
+ */
+
+#background	0.0 0.0 0.0
+#ambient	1.0 1.0 1.0
+
+#camera
+	0.0	0	0	// position
+	0.0	0.0	-1	// facing
+	0.0	1.0	0.0	// up
+	30.0			// heightAngle
+
+#light_point -n PointLight1 --
+	1.0	1.0	1.0	// color
+	1.0	1.0	1.0	// position
+	1.0	0.0	0.0	// const, linear, quad atten
+
+
+#material -n mWhiteTextured -t stripes.bmp --
+	0.0	0.0	0.0	// ambient
+	1.0	1.0	1.0	// diffuse
+	0.9	0.9	0.9	// specular
+	0.0	0.0	0.0	// emissive
+	1.0	0.0	1.0	// kshine ktrans refind
+
+
+
+
+
+	
+#triangle -m mWhiteTextured -t --
+	-1 2.7 -1.5 -1 2.7
+	0 -2.7 -1.5 0 -2.7
+	1  2.7 -1.5 1 2.79
+
+
+
+
+
+
+#rayfile_end

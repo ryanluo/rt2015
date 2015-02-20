@@ -1,0 +1,38 @@
+#version HMCCS155FALL2002
+
+/*
+ * texture mapped torus primitive.
+ */
+
+#background	0.0 0.0 0.0
+#ambient	0.0 0.0 0.0
+
+#camera
+	0.0	0.0	-5.0	// position
+	0.0	0.0	1.0	// facing
+	0.0	1.0	0.0	// up
+	30.0			// heightAngle
+
+#light_point -n PointLight1 --
+	1.0	1.0	1.0	// color
+	-5.0	-5.0	-5.0	// position
+	1.0	0.0	0.0	// const, linear, quad attenuation
+
+#light_point -n PointLight2 --
+	1.0	1.0	1.0	// color
+	4.0	2.0	-1.5	// position
+	1.0	0.0	0.0	// const, linear, quad attenuation
+
+#material -n mTextured -t warning.bmp --
+	0.0	0.0	0.0	// ambient
+	0.0	1.0	1.0	// diffuse
+	1.0	1.0	1.0	// specular
+	0.0	0.0	0.0	// emissive
+	0.9	0.0	0.0	// kspec ktrans refind
+
+
+#torus -n Torus1 -m mTextured -t --
+	0.0	0.0	0.0	// position
+	2.0	0.5		// majorradius minorradius
+
+#rayfile_end

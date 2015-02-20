@@ -56,7 +56,7 @@ void RayFile::raytrace (Image* image)
             // RAY_CASTING TODO
             Point3d pixel = leftCorner + ((double) i + .5) * camera->getRight() - ((double) j + 0.5) * camera->getUp();
             Point3d difference = pixel - origin;
-            Vector3d pixelV = ((double) 1/distance(difference))*((Vector3d) (pixel - origin));
+            Vector3d pixelV = ((Vector3d)(pixel-origin)).normalize();
 
             Rayd theRay(origin, pixelV);
 			// get the color at the closest intersection point

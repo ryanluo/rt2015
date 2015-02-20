@@ -1,0 +1,54 @@
+#version HMCCS155FALL2002
+
+// deep blue background
+#background   0.0  0.0  0.3
+
+// ambient light
+#ambient
+	1.0 1.0 1.0 //intensity
+
+
+// default camera
+#camera
+	    0.0     0.0     0.0 // position
+	    0.0     0.0     -1.0 // facing
+	    0.0     1.0     0.0 // up
+	    30.0                // heightAngle
+
+
+#material -n white --
+	    1.0     1.0     1.0 // ambient
+	    0.0     0.0     0.0 // diffuse
+	    0.0     0.0     0.0 // specular
+	    0.0     0.0     0.0 // emissive
+	    0.0     0.0         // kspec    ktrans
+	    1.0                 // refind
+
+
+#material -n redEmissive --
+	    0.0     0.0     0.0 // ambient
+	    0.0     0.0     0.0 // diffuse
+	    0.0     0.0     0.0 // specular
+	    0.8     0.0     0.0 // emissive
+	    0.0     0.0         // kspec    ktrans
+	    1.0                 // refind
+
+#group_begin -n firstGroup --
+  1.0    0.0    0.0    0.0   
+  0.0    1.0    0.0    0.0  
+  0.0    0.0    1.0    0.0  
+  0.0    0.0    0.0    1.0  
+
+#sphere -m white --
+	    1.0     2.0     -5.0 // position
+	    1.0                 // radius
+
+#sphere -m redEmissive --
+	    -1.0     -2.0     -5.0 // position
+	    1.0                 // radius
+		
+
+#group_end
+
+
+#rayfile_end

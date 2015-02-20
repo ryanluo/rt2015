@@ -1,0 +1,44 @@
+#version HMCCS155FALL2002
+
+/*
+ * single directional light on sphere and triangle. should see shadows */
+
+#background	0.0 0.0 0.0
+#ambient	0.0 0.0 0.0
+
+#camera
+	0.0	0.0	5.0	// position
+	0.0	0.0	-1.0	// facing
+	0.0	1.0	0.0	// up
+	30.0			// heightAngle
+
+
+
+#light_dir -n DirectionalLight1 --
+	1.0	1.0	1.0	// color
+	-1.0	-1.0	-1.0	// direction
+
+#material -n mMatteBlue --
+	0.0	0.0	0.0	// ambient
+	0.1	0.1	0.8	// diffuse
+	0.0	0.0	0.0	// specular
+	0.0	0.0	0.0	// emissive
+	0.0	0.0	1.0	// kspec ktrans refind
+
+#material -n mShinyRed --
+	0.0	0.0	0.0	// ambient
+	0.8	0.1	0.1	// diffuse
+	1.0	1.0	1.0	// specular
+	0.0	0.0	0.0	// emissive
+	0.5	0.0	1.0	// kspec ktrans refind
+
+#sphere -n Sphere1 -m mShinyRed --
+	0 0 0		// position
+	1.0			// radius
+
+#triangle -n Triangle1 -m mMatteBlue --
+	0.0	-2.2	-5.0	// v0
+	-1.0	-3.2	-1	// v1
+	-4.0	0.2	-3	// v2
+
+#rayfile_end

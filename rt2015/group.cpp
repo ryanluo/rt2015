@@ -39,10 +39,10 @@ double Group::intersect (Intersection& intersectionInfo)
     // transform localInfo.theRay into local coordinates
     // RAY_CASTING TODO (Transformations)
 
-    localInfo.theRay.setPos(this->transform.multPos(localInfo.theRay.getPos()));
-    Vector3d newDir = this->transform.multDir(localInfo.theRay.getDir());
-    localInfo.theRay.setDir(1./newDir.dot(newDir) * newDir);
-    
+    localInfo.theRay.setPos(this->invTransform.multPos(localInfo.theRay.getPos()));
+    Vector3d newDir = this->invTransform.multDir(localInfo.theRay.getDir());
+    localInfo.theRay.setDir(newDir.normalize());
+
     // alpha is the distance to the closest intersection point we've found
     double alpha=-1;
 
@@ -63,11 +63,12 @@ double Group::intersect (Intersection& intersectionInfo)
         // RAY_CASTING TODO (Intersection)
 		// In case of a new closest intersection, update alpha a localInfo
         // RAY_CASTING TODO (Intersection)
-        if (currDist < alpha || alpha < 0) {
+        if (currDist > 0 && (currDist < alpha || alpha < 0)) {
             alpha = currDist;
             localInfo.material = tempInfo.material;
             localInfo.normal = tempInfo.normal;
             localInfo.textured = tempInfo.textured;
+            localInfo.iCoordinate = tempInfo.iCoordinate;
         }
 	}
 
@@ -79,9 +80,9 @@ double Group::intersect (Intersection& intersectionInfo)
     // RAY_CASTING TODO (sphere/triangle intersection and transformation)
     if (alpha > -1) {
         intersectionInfo.material = localInfo.material;
-        Vector3d normalTrans = localInfo.normal;
-        intersectionInfo.normal = normalTrans;
-        intersectionInfo.normal = 1./ intersectionInfo.normal.dot(intersectionInfo.normal) * intersectionInfo.normal;
+        intersectionInfo.iCoordinate = this->transform.multPos(localInfo.iCoordinate);
+        alpha = ((Vector3d) (intersectionInfo.iCoordinate - intersectionInfo.theRay.getPos())).length();
+        intersectionInfo.normal = this->invTransposeTransform.multDir(localInfo.normal).normalize();
         intersectionInfo.textured = localInfo.textured;
     }
     return alpha;

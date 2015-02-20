@@ -1,0 +1,59 @@
+#version HMCCS155FALL2005
+#camera
+0.0     0.0     10.0 	// position
+0.0    0.0	-1.0 	// facing
+0.0     1.0     0.0 	// up
+20.0 			// halfHeightAngle
+
+#light_dir -n DirectionalLight1 --
+1.0	1.0	1.0	// color
+-1.0	-1.0	-1.0	// direction
+			
+#background
+0.0  	0.0  	0.5
+
+#material -n white  --
+0.0     0.0     0.0 	// ambient
+1.0     1.0     1.0 	// diffuse
+0.0     0.0     0.0 	// specular
+0.0     0.0     0.0 	// emissive
+0.0     0.0         	// kspec, ktrans
+1.0                	// refind
+
+#material -n black  --
+0.0     0.0     0.0 	// ambient
+0.0     0.0     0.0 	// diffuse
+0.0     0.0     0.0 	// specular
+0.0     0.0     0.0 	// emissive
+0.0     0.0         	// kspec, ktrans
+1.0                	// refind
+
+#group_begin -n snowman --
+#translate 0 0 -10
+#rotate 45 0 0 1
+#scale 2 1 1
+
+#group_begin -n bottom --
+#translate 0 -1 0
+#sphere -m white --
+0.0     0.0     0.0 // position
+1.0                    // radius
+#group_end // end bottom
+
+#group_begin -n middle --
+
+#sphere -m white --
+0.0     0.0     0.0 // position
+1.0                    // radius
+#group_end // end middle
+
+#group_begin -n headAssembly --
+#translate 0 1 0
+#sphere -m white --
+0.0     0.0     0.0 // position
+1.0                    // radius
+#group_end // end headAssembly
+
+#group_end // end snowman
+			
+#rayfile_end

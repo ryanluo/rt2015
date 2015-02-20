@@ -60,8 +60,12 @@ double Sphere::intersect (Intersection& intersectionInfo)
 
     if (alpha < 0) return alpha = -1;
     intersectionInfo.material = this->material;
-    Vector3d normal = -1.*((Vector3d) this->center - alpha * v);
-    normal = 1./normal.dot(normal) * normal;
+    intersectionInfo.iCoordinate = intersectionInfo.theRay.getPos() + alpha * v;
+    Vector3d normal = ((Vector3d) intersectionInfo.iCoordinate - this->center);
+    normal.normalize();
+    if (normal.dot(v)>0) {
+        normal *= -1;
+    }
     intersectionInfo.normal = normal;
     intersectionInfo.textured = this->textured;
     

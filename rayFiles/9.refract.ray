@@ -1,0 +1,41 @@
+#version HMCCS155FALL2002
+/*
+* snell's law refraction test.  use recursive depth 3. triangle in the background
+* with a glass sphere in front - should see distorted triangle through the
+* sphere. 
+*/
+#background	0.0 0.0 0.0
+#ambient	0.0 0.0 0.0
+#camera
+	-1.0	0.0	0.0	// position
+	1.0	0.0	0.0	// facing
+	0.0	1.0	0.0	// up
+	30.0			// heightAngle
+#light_point -n PointLight1 --
+	1.0	1.0	1.0	// color
+	1.0	1.0	1.0	// position
+	1.0	0.0	0.0	// const, linear, quad atten
+#light_point -n PointLight2 --
+	1.0	1.0	1.0	// color
+	1.0	0.0	-5.0	// position
+	1.0	0.0	0.0	// const, linear, quad atten
+#material -n mblue  --
+	0.1	0.1	0.1	// ambient
+	0.0	0.0	1.0	// diffuse
+	1.0	1.0	1.0	// specular
+	0.0	0.0	0.0	// emissive
+	0.1	0.0	1.0	// kspec ktrans refind
+#material -n mAcrylic --
+	0.1	0.1	0.1	// ambient
+	0.7	0.7	0.7	// diffuse
+	0.7	0.7	0.7	// specular
+	0.0	0.0	0.0	// emissive
+	0.99	0.8	1.2	// kspec ktrans refind
+#sphere -n Sphere1 -m mAcrylic --
+	0.5	0.0	0	// position
+	0.5			// radius
+#triangle -n Triangle1 -m mblue  --
+	3.0	-2.0	-1.0	// v0 t0
+	3.0	-2.0	3.0	// v1 t1
+	3.0	10.0	1.0	// v2 t2
+#rayfile_end

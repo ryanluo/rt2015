@@ -36,7 +36,7 @@ double Triangle::intersect (Intersection& intersectionInfo)
 
     Vector3d v = intersectionInfo.theRay.getDir();
     Vector3d u = this->v[0] - intersectionInfo.theRay.getPos();
-    Vector3d n = this->n;
+    
 
     if (n.dot(v) == 0) return -1;
     
@@ -44,7 +44,9 @@ double Triangle::intersect (Intersection& intersectionInfo)
     
     Vector3d w1 = this->v[1] - this->v[0];
     Vector3d w2 = this->v[2] - this->v[0];
-    
+    if (n.dot(v) > 0) {
+        n = -1. * n;
+    }
     double c = (alpha * v - u).dot(w1);
     double e = (alpha * v - u).dot(w2);
     double a = w1.dot(w1);
@@ -54,9 +56,10 @@ double Triangle::intersect (Intersection& intersectionInfo)
     double gamma = (c*b-a*e)/(-a*d+sqr(b));
     double beta = (c - gamma * b) / a;
     
-    if (beta >= 0 && gamma >= 0 && beta + gamma <= 1) {
+    if (alpha>=0 && beta >= 0 && gamma >= 0 && beta + gamma <= 1) {
+        intersectionInfo.iCoordinate = intersectionInfo.theRay.getPos() + alpha * v;
         intersectionInfo.material = this->material;
-        intersectionInfo.normal = n;
+        intersectionInfo.normal = n.normalize();
         intersectionInfo.textured = this->textured;
         return alpha;
     }

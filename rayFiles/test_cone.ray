@@ -1,0 +1,48 @@
+#version HMCCS155FALL2002
+
+/*
+ * texture mapped cone primitive.
+ */
+
+#background	0.0 0.0 0.0
+#ambient	0.0 0.0 0.0
+
+#camera
+	-5.0	0.0	-1.0	// position
+	1.0	0.0	0.5	// facing
+	0.0	1.0	0.0	// up
+	30.0			// heightAngle
+
+#light_point -n PointLight1 --
+	1.0	1.0	1.0	// color
+	-1.0	-1.0	1.0	// position
+	1.0	0.0	0.0	// const, linear, quad attenuation
+
+#light_point -n PointLight2 --
+	1.0	1.0	1.0	// color
+	-3.0	2.0	1.0	// position
+	1.0	0.0	0.0	// const, linear, quad attenuation
+
+#light_point -n PointLight3 --
+	1.0	1.0	1.0	// color
+	0.0	0.0	-3.0	// position
+	1.0	0.0	0.0	// const, linear, quad attenuation
+
+
+#material -n mTextured -t warning.bmp --
+	0.0	0.0	0.0	// ambient
+	0.0	1.0	1.0	// diffuse
+	1.0	1.0	1.0	// specular
+	0.0	0.0	0.0	// emissive
+	0.9	0.0	1.0	// kspec ktrans refind
+
+
+#cone -n OpenCone -m mTextured -t --
+	0.0	-1.5	0.5	// position
+	1.0	3.0		// radius height
+
+#cone -n ClosedCone -m mTextured -t -c --
+	0.0	1.5	0.5	// position
+	1.0	3.0		// radius height
+
+#rayfile_end

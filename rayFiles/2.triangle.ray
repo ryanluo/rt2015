@@ -1,0 +1,27 @@
+#version HMCCS155FALL2002
+
+#background	0.0 0.0 0.3
+
+#light_dir -n DirectionalLight1 --
+	1.0	1.0	1.0	// color
+	-1.0	-1.0	-1.0	// direction
+
+#camera
+	0.0	0.0	0.0	// position
+	0.0	0.0	-1.0	// facing
+	0.0	1.0	0.0	// up
+	30.0			// heightAngle
+
+#material -n white --
+	0.0	0.0	0.0	// ambient
+	1.0	1.0	1.0	// diffuse
+	0.0	0.0	0.0	// specular
+	0.0	0.0	0.0	// emissive
+	0.0	0.0	1.0	// kspec ktrans refind
+
+#triangle -m white  --
+	1.0	0.0	-5.0	// v0
+	5.0	0.0	-5.0	// v1
+	2.0	5.0	-5.0	// v2
+
+#rayfile_end

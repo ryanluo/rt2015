@@ -1,0 +1,51 @@
+#version HMCCS155FALL2002
+
+/*
+ * texture mapped box primitive.
+ */
+
+#background	0.0 0.0 0.0
+#ambient	0.0 0.0 0.0
+
+#camera
+
+	-3.13	-1.77	-2.00	// position
+	0.79	0.40	0.46	// facing
+	-0.36	0.92	-0.18	// up
+	30.0			// heightAngle  
+
+
+#light_point -n PointLight1 --
+	1.0	1.0	1.0	// color
+	-1.0	-2.0	1.0	// position
+	1.0	0.0	0.0	// const, linear, quad attenuation
+
+#light_point -n PointLight2 --
+	1.0	1.0	1.0	// color
+	-3.0	2.0	1.0	// position
+	1.0	0.0	0.0	// const, linear, quad attenuation
+
+#light_point -n PointLight3 --
+	1.0	1.0	1.0	// color
+	0.0	0.0	-3.0	// position
+	1.0	0.0	0.0	// const, linear, quad attenuation
+
+#light_point -n PointLight4 --
+	1.0	1.0	1.0	// color
+	10.0	10.0	10.0	// position
+	1.0	0.0	0.0	// const, linear, quad attenuation
+
+
+#material -n mWhite --
+	0.0	0.0	0.0	// ambient
+	0.0	1.0	1.0	// diffuse
+	1.0	1.0	1.0	// specular
+	0.0	0.0	0.0	// emissive
+	0.9	0.0	1.0	// kspec ktrans refind
+
+
+#box -n Box1 -m mWhite   --
+	0.0	0.0	0.0	// position
+	1.0	2.0	3.0	// dimensions
+
+#rayfile_end
