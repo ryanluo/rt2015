@@ -25,9 +25,16 @@ Color3d PointLight::getDiffuse (Intersection& info)
    * the normal with the vector opposite the incident light's direction.
    * Then factor in attenuation.
    */
-	return Color3d(0,0,0);
-
-  
+    Vector3d lp = info.iCoordinate - location;
+    Vector3d ld = -lp.normalize();
+    if (info.normal.dot(ld) > 0) info.normal *= -1;
+    Color3d md = info.material->getDiffuse(info);
+    Color3d l  = color;
+    double SP = 1.0;
+    double A = 1.0 / (constAtten + linearAtten * lp.length() + quadAtten * sqr(lp.length()));
+    Color3d diffuse;
+    for (int i = 0; i < 3; ++i) diffuse[i] = A * SP * md[i] * l[i] * max(0.0,(info.normal.dot(-ld)));
+	return diffuse;
 }
 
 
@@ -39,8 +46,20 @@ Color3d PointLight::getSpecular (Intersection& info)
    * some power (in this case, kshine). Then factor in attenuation.
    */
 	//compute direction light falls on surface
-
-	return Color3d(0,0,0);
+    
+    Vector3d lp = info.iCoordinate - location;
+    Vector3d v = -lp.normalize();
+    if (v.dot(info.normal) > 0) info.normal *= -1;
+    Vector3d dr = v + 2 * (-v.dot(info.normal) * info.normal);
+    double kshine = info.material->getKshine();
+    
+    Color3d ms = info.material->getSpecular();
+    Color3d l  = color;
+    double SP = 1.0;
+    double A = 1.0 / (constAtten + linearAtten * lp.length() + quadAtten * sqr(v.length()));
+    Color3d specular;
+    for (int i = 0; i < 3; ++i) specular[i] = A * SP * ms[i] * l[i] * pow(max(0.0,(-v.dot(dr))),kshine);
+    return specular;
 	}
 
 
@@ -51,9 +70,15 @@ bool PointLight::getShadow (Intersection& iInfo, ShapeGroup* root)
    * to a light, cast a ray from the intersection towards the light
    * and see if it intersects anything. 
    */
-
-	return false;
-
+    
+    if (iInfo.normal.dot(iInfo.theRay.getDir()) > 0) iInfo.normal *= -1;
+    Intersection info;
+    Vector3d lp = location - iInfo.iCoordinate;
+    Vector3d ld = lp.normalize();
+    info.theRay = Rayd(iInfo.iCoordinate + EPSILON * iInfo.normal, ld);
+    root->intersect(info);
+    Vector3d ip = info.iCoordinate - iInfo.iCoordinate;
+    return ip.length() < lp.length();
 }
 
 
