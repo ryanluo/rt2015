@@ -174,8 +174,6 @@ Color3d RayFile::getColor(Rayd theRay, int rDepth)
     transRay.setDir(v);
     transRay.setPos(intersectionInfo.iCoordinate-EPSILON*n);
     
-    color += getColor(transRay, rDepth - 1);
-    /*
     float beta;
     
     if (intersectionInfo.entering){
@@ -210,11 +208,9 @@ Color3d RayFile::getColor(Rayd theRay, int rDepth)
     
         transRay.setDir(vTrans);
 
-        
         color += ktrans * (intersectionInfo.material->getSpecular()) *getColor(transRay, rDepth-1);
         
     }
-     */
     
     color.clampTo(0,1);
 

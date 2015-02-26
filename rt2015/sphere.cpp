@@ -52,12 +52,20 @@ double Sphere::intersect (Intersection& intersectionInfo)
     
     
     double determ = 4*sqr(u.dot(v)) - 4*v.dot(v)*(u.dot(u) - sqr(this->radius));
+    double alpha1 = -1;
+    double alpha2 = -1;
     if (determ >= 0) {
-        double alpha1 = (2 * (u.dot(v)) + sqrt(determ))/(2*v.dot(v));
-        double alpha2 = (2 * (u.dot(v)) - sqrt(determ))/(2*v.dot(v));
-        alpha = min(alpha1, alpha2);
+        alpha1 = (2 * (u.dot(v)) + sqrt(determ))/(2*v.dot(v));
+        alpha2 = (2 * (u.dot(v)) - sqrt(determ))/(2*v.dot(v));
     }
-
+    if (alpha1 < 0) {
+        if (alpha2 < 0) return -1;
+        alpha1 = alpha2;
+    }
+    if (alpha2 < 0) {
+        alpha2 = alpha1;
+    }
+    alpha = min(alpha1, alpha2);
     if (alpha < 0) return alpha = -1;
     intersectionInfo.material = this->material;
     intersectionInfo.iCoordinate = intersectionInfo.theRay.getPos() + alpha * v;
