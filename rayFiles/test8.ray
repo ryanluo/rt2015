@@ -1,0 +1,83 @@
+#version HMCCS155FALL2005
+
+// deep blue background
+#background   0.0  0.0  0.3
+
+
+// default camera
+#camera
+	    0.0     0.0     10.0 // position
+	    0.0     0.0     -1.0 // facing
+	    0.0     1.0     0.0 // up
+	    30.0                // heightAngle
+
+#light_dir -n DirectionalLight1 --
+	1.0	1.0	1.0	// color
+	-1.0	-1.0	-1.0	// direction
+
+#light_point -n PointLight1 --
+	1.0	1.0	5.0	// color
+	2.0	1.0	1.0	// position
+	1.0	0.0	0.0	// const, linear, quad atten
+
+#material -n red  --
+	    0.0     0.0     0.0 // ambient
+	    1.0     0.0     0.0 // diffuse
+	    0.5     0.0     0.0 // specular
+	    0.0     0.0     0.0 // emissive
+	    0.0     0.0         // kspec    ktrans
+	    1.0                 // refind
+
+#material -n mirror --
+	 	0.0     0.0     0.0 // ambient
+	    0.0     0.0     0.0 // diffuse
+	    0.5     0.5     0.5 // specular
+	    0.0     0.0     0.0 // emissive
+	    0.8     0.0         // kspec    ktrans
+	    1.0                 // refind
+
+#material -n white  --
+	    0.0     0.0     0.0 // ambient
+	    1.0     1.0     1.0 // diffuse
+	    0.0     0.0     0.0 // specular
+	    0.0     0.0     0.0 // emissive
+	    0.0     0.0         // kspec    ktrans
+	    1.0                 // refind
+
+#material -n mAcrylic --
+	0.1	0.1	0.1	// ambient
+	0.7	0.7	0.7	// diffuse
+	0.7	0.7	0.7	// specular
+	0.0	0.0	0.0	// emissive
+	0.99	0.8	1.0	// kspec ktrans refind
+
+#group_begin -n front --
+
+#triangle -m red --
+	-2.0	0.0	-5.0	// v0
+	2.0	0.0	-5.0	// v1
+	0.0	4.0	-5.0	// v2
+
+#group_begin -n mid --
+#translate 0 0 -4
+#scale 2 2 1
+#triangle -m mAcrylic --
+	-2.0	0.0	-5.0	// v0
+	2.0	0.0	-5.0	// v1
+	0.0	4.0	-5.0	// v2
+
+#group_begin -n back --
+#translate 0 0 -4
+#scale 2 2 1
+#triangle -m mirror --
+	-2.0	0.0	-5.0	// v0
+	2.0	0.0	-5.0	// v1
+	0.0	4.0	-5.0	// v2
+
+#group_end
+
+#group_end
+
+#group_end
+
+#rayfile_end
