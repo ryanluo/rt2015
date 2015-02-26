@@ -47,20 +47,23 @@ Color3d PointLight::getSpecular (Intersection& info)
    */
 	//compute direction light falls on surface
     
-    Vector3d lp = info.iCoordinate - location;
-    Vector3d v = -lp.normalize();
-    if (v.dot(info.normal) > 0) info.normal *= -1;
-    Vector3d dr = v + 2 * (-v.dot(info.normal) * info.normal);
-    double kshine = info.material->getKshine();
+    Vector3d direction = (info.iCoordinate - location);
+    direction = direction.normalize();
     
-    Color3d ms = info.material->getSpecular();
-    Color3d l  = color;
-    double SP = 1.0;
-    double A = 1.0 / (constAtten + linearAtten * lp.length() + quadAtten * sqr(v.length()));
-    Color3d specular;
-    for (int i = 0; i < 3; ++i) specular[i] = A * SP * ms[i] * l[i] * pow(max(0.0,(-v.dot(dr))),kshine);
-    return specular;
-	}
+    Vector3d lp = info.iCoordinate - location;
+
+    if (direction.dot(info.normal) > 0) info.normal *= -1;
+    
+    
+    Vector3d reflect = direction - info.normal * (2 * direction.dot(info.normal));
+    reflect.normalize();
+    double angleFactor = - reflect.dot(info.theRay.getDir());
+    if (angleFactor < 0) return Color3d(0,0,0);
+    angleFactor = pow(angleFactor, info.material->getKshine());
+    double A = 1.0 / (constAtten + linearAtten * lp.length() + quadAtten * sqr(lp.length()));
+
+    return A * color * info.material->getSpecular() * angleFactor;
+}
 
 
 bool PointLight::getShadow (Intersection& iInfo, ShapeGroup* root)
@@ -75,10 +78,14 @@ bool PointLight::getShadow (Intersection& iInfo, ShapeGroup* root)
     Intersection info;
     Vector3d lp = location - iInfo.iCoordinate;
     Vector3d ld = lp.normalize();
-    info.theRay = Rayd(iInfo.iCoordinate + EPSILON * iInfo.normal, ld);
+    Rayd shadowRay;
+    shadowRay.setDir(ld);
+    shadowRay.setPos(iInfo.iCoordinate + EPSILON * iInfo.normal);
+    info.theRay = shadowRay;
     root->intersect(info);
     Vector3d ip = info.iCoordinate - iInfo.iCoordinate;
-    return ip.length() < lp.length();
+    
+    return root->intersect(info) > EPSILON;
 }
 
 

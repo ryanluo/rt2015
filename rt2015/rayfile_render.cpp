@@ -152,7 +152,7 @@ Color3d RayFile::getColor(Rayd theRay, int rDepth)
     Vector3d v = theRay.getDir();
     Vector3d n = intersectionInfo.normal;
     if (n.dot(v) > 0){
-        n = (-1) * n;
+        n *= -1;
     }
     Vector3d vPrime = v + 2 * (-v.dot(n))*n;
     
@@ -171,16 +171,18 @@ Color3d RayFile::getColor(Rayd theRay, int rDepth)
     double refind = intersectionInfo.material->getRefind();
     double ktrans = intersectionInfo.material->getKtrans();
     // compute transmitted ray using snell's law
+    transRay.setDir(v);
+    transRay.setPos(intersectionInfo.iCoordinate-EPSILON*n);
+    
+    color += getColor(transRay, rDepth - 1);
+    /*
     float beta;
     
-    if (n.dot(v) <= 0){
-        beta = refind;
-        intersectionInfo.entering = true;
+    if (intersectionInfo.entering){
+        beta = 1/refind;
     }
     else{
-        beta = 1/refind;
-        n = (-1) * n;
-        intersectionInfo.entering = false;
+        beta = refind;
     }
     
     float thetaIn = acos(v.dot(-n));
@@ -196,11 +198,10 @@ Color3d RayFile::getColor(Rayd theRay, int rDepth)
         vTrans = v;
         //same lines as below
         transRay.setDir(vTrans);
-        transRay.setPos(intersectionInfo.iCoordinate+EPSILON*n);
         
-        for (int i = 0; i < 3; ++i){
-            color[i] += ktrans * (intersectionInfo.material->getSpecular()[i]) *getColor(transRay, rDepth-1)[i];
-        }
+
+        color += ktrans * (intersectionInfo.material->getSpecular()) * getColor(transRay, rDepth-1);
+        
     }
     else{
         Vector3d vs = (v - cos(thetaIn) * (-n)) / sin(thetaIn);
@@ -208,12 +209,12 @@ Color3d RayFile::getColor(Rayd theRay, int rDepth)
         vTrans = cos(thetaOut) * (-n) + sin(thetaOut) * vs.normalize();
     
         transRay.setDir(vTrans);
-        transRay.setPos(intersectionInfo.iCoordinate+EPSILON*n);
 
-        for (int i = 0; i < 3; ++i){
-            color[i] += ktrans * (intersectionInfo.material->getSpecular()[i]) *getColor(transRay, rDepth-1)[i];
-        }
+        
+        color += ktrans * (intersectionInfo.material->getSpecular()) *getColor(transRay, rDepth-1);
+        
     }
+     */
     
     color.clampTo(0,1);
 
