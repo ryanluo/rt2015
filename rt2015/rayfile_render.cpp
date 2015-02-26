@@ -71,7 +71,7 @@ void RayFile::raytrace (Image* image)
 			p.g = theColor[1];
 			p.b = theColor[2];
 
-			image->setPixel(i, j, p);
+			image->setPixel_(i, j, p);
 
 		} // end for-i
 
@@ -109,6 +109,7 @@ Color3d RayFile::getColor(Rayd theRay, int rDepth)
 	// check for intersections
 	Intersection intersectionInfo;
 	intersectionInfo.theRay=theRay;
+    //Color3d mspec = intersectionInfo.material->getSpecular();
 	double dist = root->intersect(intersectionInfo);
 
     if (dist <=EPSILON) {
@@ -119,11 +120,14 @@ Color3d RayFile::getColor(Rayd theRay, int rDepth)
 	Color3d color;
 
 	// check for texture
-
-	// add emissive term
-
-	// add ambient term
+    if (intersectionInfo.textured){
+        
+    }
     
+	// add emissive term
+    color += intersectionInfo.material->getEmissive();
+	// add ambient term
+    color += intersectionInfo.material->getAmbient();
     
     // add contribution from each light
     for (VECTOR(Light*)::iterator theLight = lights.begin(); theLight != lights.end(); ++theLight)
@@ -134,25 +138,84 @@ Color3d RayFile::getColor(Rayd theRay, int rDepth)
         }
     }
 
-
+    color.clampTo(0,1);
 	// stop if no more recursion required
-	if (rDepth == 0)
+    if (rDepth == 0)
 		return color; // done
-
+        
 
 	// stop if we are already at white
-	color.clampTo(0,1);
+	
 	if (color==white) // can't add any more
 		return color;
 
-	// recursive step
-
-	// reflection
+    Vector3d v = theRay.getDir();
+    Vector3d n = intersectionInfo.normal;
+    if (n.dot(v) > 0){
+        n = (-1) * n;
+    }
+    Vector3d vPrime = v + 2 * (-v.dot(n))*n;
     
+    Rayd newRay;
+    newRay.setDir(vPrime);
+    newRay.setPos(intersectionInfo.iCoordinate+EPSILON*n);
+	// recursive step
+    Color3d RecColor = getColor(newRay, rDepth-1);
+	// reflection
+    for (int i = 0; i < 3; ++i) color[i] += (intersectionInfo.material->getSpecular()[i]) * RecColor[i];
 
 	// transmission
+    
+    Rayd transRay;
+    Vector3d vTrans;
+    double refind = intersectionInfo.material->getRefind();
+    double ktrans = intersectionInfo.material->getKtrans();
+    // compute transmitted ray using snell's law
+    float beta;
+    
+    if (n.dot(v) <= 0){
+        beta = refind;
+        intersectionInfo.entering = true;
+    }
+    else{
+        beta = 1/refind;
+        n = (-1) * n;
+        intersectionInfo.entering = false;
+    }
+    
+    float thetaIn = acos(v.dot(-n));
+    float thetaOut = asin(beta * sin(thetaIn));
+    
+    if(beta * (sin(thetaIn)) < 0){
+        cout<<"Error on beta sin thetaIn for transmission"<<endl;
+    }
+    else if (beta * (sin(thetaIn)) > 1){
+        //no transmission
+    }
+    else if (beta * (sin(thetaIn)) == 0){
+        vTrans = v;
+        //same lines as below
+        transRay.setDir(vTrans);
+        transRay.setPos(intersectionInfo.iCoordinate+EPSILON*n);
+        
+        for (int i = 0; i < 3; ++i){
+            color[i] += ktrans * (intersectionInfo.material->getSpecular()[i]) *getColor(transRay, rDepth-1)[i];
+        }
+    }
+    else{
+        Vector3d vs = (v - cos(thetaIn) * (-n)) / sin(thetaIn);
+    
+        vTrans = cos(thetaOut) * (-n) + sin(thetaOut) * vs.normalize();
+    
+        transRay.setDir(vTrans);
+        transRay.setPos(intersectionInfo.iCoordinate+EPSILON*n);
 
-	// compute transmitted ray using snell's law
+        for (int i = 0; i < 3; ++i){
+            color[i] += ktrans * (intersectionInfo.material->getSpecular()[i]) *getColor(transRay, rDepth-1)[i];
+        }
+    }
+    
+    color.clampTo(0,1);
 
 	return color;
 }
