@@ -63,8 +63,16 @@ bool Material::procTextured()
 const Color3d Material::getTexture(double u, double v)
 {
 
-
-	return Color3d(0,0,0);
+    Color3d tempColor;
+    double imageU;
+    double imageV;
+    imageU = u*texture->getWidth();
+    imageV = v*texture->getHeight();
+    
+    for (int i = 0; i < 3; ++i){
+        tempColor[i] = texture->getPixel_(imageU, imageV, i);
+    }
+	return tempColor;
 }
 const Color3d Material::getProceduralTexture(Point3d point)
 {
@@ -84,7 +92,25 @@ void Material::bumpNormal (Vector3d& normal,
 
 	if (bumpMap != NULL)
 	{	
-
+        double x;
+        double y;
+        int width = bumpMap->getWidth();
+        int height = bumpMap->getHeight();
+        x = info.texCoordinate[0]*width;
+        y = info.texCoordinate[1]*height;
+        
+        double p1 = bumpMap->getPixel(floor(x), y, 0);
+        double p2 = bumpMap->getPixel(((int)floor(x+1))%width, y, 0);
+        double p3 = bumpMap->getPixel(x, floor(y), 0);
+        double p4 = bumpMap->getPixel(x, (int)floor(y+1)%height, 0);
+        
+        double dx = p2-p1;
+        double dy = p3-p4;
+        
+        Vector3d perturb = dx*right+dy*up;
+        perturb *= bumpScale;
+        info.normal += perturb;
+        info.normal.normalize();
 	}
 	return;
 }

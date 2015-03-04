@@ -48,9 +48,6 @@ double Sphere::intersect (Intersection& intersectionInfo)
     
     Vector3d u = this->center - intersectionInfo.theRay.getPos();
     
-    
-    
-    
     double determ = 4*sqr(u.dot(v)) - 4*v.dot(v)*(u.dot(u) - sqr(this->radius));
     double alpha1 = -1;
     double alpha2 = -1;
@@ -79,6 +76,27 @@ double Sphere::intersect (Intersection& intersectionInfo)
     intersectionInfo.normal = normal;
     intersectionInfo.textured = this->textured;
     
+    
+    //begin textured stuff
+    if (alpha > 0){
+        Point3d localPoint = intersectionInfo.iCoordinate-this->center;
+        double r = ((Vector3d)localPoint).length();
+        double theta = asin(localPoint[2]/r);
+        double phi = atan2(localPoint[1],localPoint[0]);
+        
+        theta = (theta+(M_PI/2))/(M_PI);
+        phi = (phi+M_PI)/(2* M_PI);
+        intersectionInfo.texCoordinate[0] = phi;
+        intersectionInfo.texCoordinate[1] = theta;
+        
+        //bump mapping
+        Vector3d yDir(0,1,0);
+        Vector3d vectorUp = yDir-normal.dot(yDir)*normal;
+        vectorUp.normalize();
+        Vector3d right = -normal.cross(vectorUp);
+        
+        material->bumpNormal(normal, vectorUp, right, intersectionInfo, bumpScale);
+    }
     return alpha;
 }
 
