@@ -26,8 +26,8 @@ Color3d PointLight::getDiffuse (Intersection& info)
    * Then factor in attenuation.
    */
     Vector3d lp = info.iCoordinate - location;
-    Vector3d ld = -lp.normalize();
-    if (info.normal.dot(ld) > 0) info.normal *= -1;
+    Vector3d ld = lp.normalize();
+
     Color3d md = info.material->getDiffuse(info);
     Color3d l  = color;
     double SP = 1.0;
@@ -52,7 +52,6 @@ Color3d PointLight::getSpecular (Intersection& info)
     
     Vector3d lp = info.iCoordinate - location;
 
-    if (direction.dot(info.normal) > 0) info.normal *= -1;
     
     
     Vector3d reflect = direction - info.normal * (2 * direction.dot(info.normal));

@@ -61,6 +61,16 @@ double Triangle::intersect (Intersection& intersectionInfo)
         intersectionInfo.material = this->material;
         intersectionInfo.normal = n.normalize();
         intersectionInfo.textured = this->textured;
+        intersectionInfo.texCoordinate[0] = beta;
+        intersectionInfo.texCoordinate[1] = gamma;
+        //bump mapping
+            Vector3d yDir(0,1,0);
+            Vector3d vectorUp = yDir-n.dot(yDir)*n;
+            vectorUp.normalize();
+            Vector3d right = -n.cross(vectorUp);
+            
+            material->bumpNormal(n, vectorUp, right, intersectionInfo, bumpScale);
+            
         return alpha;
     }
 	return -1;

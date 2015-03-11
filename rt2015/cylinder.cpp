@@ -34,16 +34,114 @@ double Cylinder::intersect (Intersection& info)
 	*/
 
 	/* set up quadratic: a * alpha^2 + b * alpha * c = 0 */
+    Point3d p = info.theRay.getPos();
+    Vector3d v = info.theRay.getDir();
+    
+    double a = sqr(v[0]) + sqr(v[1]);
+    double b = 2 * (p[0]*v[0] + p[1]*v[1] - v[0]*center[0] - v[1]*center[1]);
+    double c = sqr(p[0]) + sqr(p[1]) - sqr(radius) + sqr(center[0]) + sqr(center[1]) - 2*p[0]*center[0] - 2*p[1]*center[1];
+    double determ = sqr(b) - 4 * a * c;
+    double alpha1 = -1;
+    double alpha2 = -1;
+    double alpha = -1;
+    double z1 = 0;
+    double z2 = 0;
+    if (determ >= 0) {
+        alpha1 = (-b + sqrt(determ)) / (2*a);
+        alpha2 = (-b - sqrt(determ)) / (2*a);
+        z1 = (p + v * alpha1)[2];
+        z2 = (p + v * alpha2)[2];
+    }
+    if (alpha1 < 0) {
+        if (alpha2 < 0) return -1;
+        alpha1 = alpha2;
+    }
+    if (alpha2 < 0) {
+        alpha2 = alpha1;
+    }
+    if (z1 - center[2] < 0 || z1 - center[2] > length) {
+        alpha1 = alpha2;
+    }
+    if (z2 - center[2] < 0 || z2 - center[2] > length) {
+        alpha2 = alpha1;
+    }
+    alpha = min(alpha1, alpha2);
+    
+    info.iCoordinate = p + alpha * v;
 
-	return -1;
+    if (alpha < 0 || info.iCoordinate[2] - center[2]> length || info.iCoordinate[2] - center[2]< 0) return alpha = -1;
+    
+    info.material = this->material;
+    Point3d circleCenter(center[0],center[1],info.iCoordinate[2]);
+    Vector3d normal = info.iCoordinate - circleCenter;
+    info.entering = true;
+    if (normal.dot(v) > 0) {
+        normal *= -1;
+        info.entering = false;
+    }
+    normal.normalize();
+    
+    if (closed) {
+        Point3d faceCenter = center;
+        Vector3d faceNormal(0,0,-1);
+        if (faceNormal.dot(v) != 0) {
+            Vector3d u = center - p;
+            double alpha3 = faceNormal.dot(u) / faceNormal.dot(v);
+            Point3d faceInter = p + alpha3 * v - center;
+            if(sqr(faceInter[0]) + sqr(faceInter[1]) <= sqr(radius) && alpha3 > 0) {
+                if (alpha3 < alpha) {
+                    info.iCoordinate = p + alpha3 * v;
+                    normal = faceNormal;
+                    info.entering = true;
+                    if (normal.dot(v) > 0) {
+                        normal *= -1;
+                        info.entering = false;
+                    }
+                }
+            }
+            faceNormal *= -1;
+            Point3d otherFace(0,0,length);
+            u = center - p + otherFace;
+            alpha3 = faceNormal.dot(u) / faceNormal.dot(v);
+            faceInter = p + alpha3 * v;
+            if(sqr(faceInter[0]) + sqr(faceInter[1]) <= sqr(radius) && alpha3 > 0) {
+                if (alpha3 < alpha) {
+                    info.iCoordinate = p + alpha3 * v;
+                    normal = faceNormal;
+                    info.entering = true;
+                    if (normal.dot(v) > 0) {
+                        normal *= -1;
+                        info.entering = false;
+                    }
+                }
+
+            }
+        }
+    }
+    info.textured = this->textured;
+    info.texCoordinate = getTexCoordinates(info.iCoordinate);
+    
+    info.normal = normal;
+
+    //bump mapping
+    Vector3d yDir(0,1,0);
+    Vector3d vectorUp = yDir-normal.dot(yDir)*normal;
+    vectorUp.normalize();
+    Vector3d right = -normal.cross(vectorUp);
+    material->bumpNormal(normal, vectorUp, right, info, bumpScale);
+    return alpha;
+    
 }
 
 TexCoord2d Cylinder::getTexCoordinates (Point3d i)
 {
 	Vector3d n(center, i);
-	
+    double r = sqrt(sqr(n[0]) + sqr(n[1]));
+    double theta = asin(n[1]/r);
+    theta = (theta + M_PI/2)/M_PI;
+    double h = n[2] / length;
 
-	TexCoord2d tCoord(0.0,0.0);
+	TexCoord2d tCoord(theta, h);
 
 	// This function calculates the texture coordinates for the cylinder
 	// intersection.  It uses the normal at the point of intersection
@@ -53,7 +151,6 @@ TexCoord2d Cylinder::getTexCoordinates (Point3d i)
 	// This remapped theta gives us tCoord[0].  For tCoord[1], we take
 	// the distance along the height of the cylinder, using the top as
 	// the zero point.
-
 
 	return tCoord;
 }

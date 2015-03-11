@@ -25,9 +25,25 @@ Color3d SpotLight::getDiffuse (Intersection& info)
    * the normal with the vector opposite the incident light's direction.
    * Then factor in attenuation and the spotlight effect.
    */
+    
+    Vector3d lp = info.iCoordinate - location;
+    Vector3d ld = lp.normalize();
 
-	return Color3d(0,0,0);
-
+    
+    Color3d md = info.material->getDiffuse(info);
+    Color3d l  = color;
+    
+    double SP = 0;
+    if (acos((ld).dot(beamCenter.normalize())) <= cutOffAngle) {
+        
+        SP = pow(max(0.,(ld).dot(beamCenter)),128*dropOffRate);
+        
+    }
+    
+    double A = 1.0 / (constAtten + linearAtten * lp.length() + quadAtten * sqr(lp.length()));
+    Color3d diffuse;
+    for (int i = 0; i < 3; ++i) diffuse[i] = A * SP * md[i] * l[i] * max(0.0,(info.normal.dot(-ld)));
+    return diffuse;
 }
 
 
@@ -39,9 +55,28 @@ Color3d SpotLight::getSpecular (Intersection& info)
    * some power (in this case, kshine). Then factor in attenuation and 
    * the spotlight effect.
    */
-
-
-  return Color3d(0,0,0);
+    
+    
+    Vector3d direction = (info.iCoordinate - location);
+    direction = direction.normalize();
+    
+    Vector3d lp = info.iCoordinate - location;
+    
+    
+    
+    Vector3d reflect = direction - info.normal * (2 * direction.dot(info.normal));
+    reflect.normalize();
+    double angleFactor = - reflect.dot(info.theRay.getDir());
+    if (angleFactor < 0) return Color3d(0,0,0);
+    angleFactor = pow(angleFactor, info.material->getKshine());
+    double A = 1.0 / (constAtten + linearAtten * lp.length() + quadAtten * sqr(lp.length()));
+    
+    double SP = 0.0;
+    if (acos((direction).dot(beamCenter.normalize())) <= cutOffAngle) {
+        SP = pow(max(0.,direction.dot(beamCenter)),128*dropOffRate);
+    }
+    
+    return A * SP *color * info.material->getSpecular() * angleFactor;
 }
 
 
@@ -52,8 +87,18 @@ bool SpotLight::getShadow (Intersection& iInfo, ShapeGroup* root)
    * to a light, cast a ray from the intersection towards the light  
    * and see if it intersects anything.
    */
-   
-	return false;
+    
+    Intersection info;
+    Vector3d lp = location - iInfo.iCoordinate;
+    Vector3d ld = lp.normalize();
+    Rayd shadowRay;
+    shadowRay.setDir(ld);
+    shadowRay.setPos(iInfo.iCoordinate + EPSILON * iInfo.normal);
+    info.theRay = shadowRay;
+    root->intersect(info);
+    Vector3d ip = info.iCoordinate - iInfo.iCoordinate;
+    
+    return root->intersect(info) > EPSILON;
 }
 
 
