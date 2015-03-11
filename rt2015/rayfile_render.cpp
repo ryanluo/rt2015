@@ -212,6 +212,21 @@ Color3d RayFile::getColor(Rayd theRay, int rDepth)
         
     }
     
+    if(options->jitter > 0){
+        Color3d cumulativeColor;
+        int jitterNumber = options->jitter;
+        while(jitterNumber > 0){
+            int r = rand() % 1;
+            double rand = (((double)r) -0.5);
+            Rayd tempRay;
+            tempRay.setDir(v);
+            tempRay.setPos(intersectionInfo.iCoordinate+rand);
+            cumulativeColor += getColor(tempRay, 0);
+            jitterNumber--;
+        }
+        color = cumulativeColor/150;
+    }
+    
     color.clampTo(0,1);
 
 	return color;
