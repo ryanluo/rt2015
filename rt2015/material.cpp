@@ -96,8 +96,8 @@ void Material::bumpNormal (Vector3d& normal,
         double y;
         int width = bumpMap->getWidth();
         int height = bumpMap->getHeight();
-        x = info.texCoordinate[0]*width;
-        y = info.texCoordinate[1]*height;
+        x = info.texCoordinate[0]*(double)width;
+        y = info.texCoordinate[1]*(double)height;
         
         double p1 = bumpMap->getPixel(floor(x), y, 0);
         double p2 = bumpMap->getPixel(((int)floor(x+1))%width, y, 0);

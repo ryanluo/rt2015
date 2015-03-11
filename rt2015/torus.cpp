@@ -28,9 +28,58 @@ double Torus::intersect (Intersection& info)
 	* plug ray equation into that for the torus, solve for alpha, and find
 	* the corresponding z-values by solving the resulting quartic.
 	*/
+    
+    Point3d p = info.theRay.getPos();
+    Vector3d v = info.theRay.getDir();
+    
+    double a = sqr(v[0]) + sqr(v[1]) + sqr(v[2])
+    
+     + sqr(majorRad) * sqr(v[2]);
+    double b = 2 * (p[0]*v[0] + p[1]*v[1] + p[2]*v[2] - v[0]*center[0] - v[1]*center[1] - v[2]*center[2])
+    
+        + sqr(majorRad) * 2 * (p[2]*v[2] - v[2] * center[2]);
+    double c = sqr(p[0]) + sqr(p[1]) + sqr(p[2])
+     + sqr(center[0]) + sqr(center[1]) + sqr(center[2])
+     - 2 * (p[0]*center[0] + p[1]*center[1] + p[2] * center[2])
+     - sqr(sqr(majorRad) + sqr(minorRad))
+    
+     - sqr(majorRad) * sqr(minorRad)
+     + sqr(majorRad) * (sqr(p[2]) + sqr(center[2]) - 2 * p[2] * center[2]);
+    double determ = sqr(b) - 4 * a * c;
+    double alpha1 = -1;
+    double alpha2 = -1;
+    double alpha = -1;
+    double z1 = 0;
+    double z2 = 0;
+    if (determ >= 0) {
+        alpha1 = (-b + sqrt(determ)) / (2*a);
+        alpha2 = (-b - sqrt(determ)) / (2*a);
+        z1 = (p + v * alpha1)[2];
+        z2 = (p + v * alpha2)[2];
+    }
+    if (alpha1 < 0) {
+        if (alpha2 < 0) return -1;
+        alpha1 = alpha2;
+    }
+    if (alpha2 < 0) {
+        alpha2 = alpha1;
+    }
 
-
-		return -1;
+    alpha = min(alpha1, alpha2);
+    
+    info.iCoordinate = p + alpha * v;
+    info.material = this->material;
+    Point3d torusCenter(info.iCoordinate[0],info.iCoordinate[1],center[2]);
+    Vector3d normal(center,info.iCoordinate);
+    info.entering = true;
+    if (normal.dot(v) > 0) {
+        normal *= -1;
+        info.entering = false;
+    }
+    normal.normalize();
+    Vector3d n(0,0,-1);
+    info.normal = n;
+    return alpha;
 
 }
 

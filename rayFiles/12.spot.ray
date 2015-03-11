@@ -7,7 +7,6 @@
  */
 
 #background	0.0 0.0 0.0
-#ambient	0.0 0.0 0.0
 
 #camera
 	-3.0	0.0	0.0	// position

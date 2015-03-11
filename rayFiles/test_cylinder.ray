@@ -29,7 +29,7 @@
 	1.0	0.0	0.0	// const, linear, quad attenuation
 
 
-#material -n mTextured -t warning.bmp --
+#material -n mTextured -t z.bmp --
 	0.0	0.0	0.0	// ambient
 	0.0	1.0	1.0	// diffuse
 	1.0	1.0	1.0	// specular
