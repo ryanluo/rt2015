@@ -89,12 +89,12 @@ double Sphere::intersect (Intersection& intersectionInfo)
         intersectionInfo.texCoordinate[0] = phi;
         intersectionInfo.texCoordinate[1] = theta;
         //bump mapping
+        
         Vector3d yDir(0,1,0);
         Vector3d vectorUp = yDir-normal.dot(yDir)*normal;
-        vectorUp.normalize();
+        if (vectorUp.length() != 0) vectorUp.normalize();
         Vector3d right = -normal.cross(vectorUp);
         material->bumpNormal(normal, vectorUp, right, intersectionInfo, bumpScale);
-        
     }
     return alpha;
 }
