@@ -214,17 +214,19 @@ Color3d RayFile::getColor(Rayd theRay, int rDepth)
     
     if(options->jitter > 0){
         //color to replace current with
-        Color3d cumulativeColor;
+        Color3d cumulativeColor = color;
         
         //for loop casts "options->jitter" number of rays into scene randomly around current point
         for(int i = 0; i < options->jitter; i++){
             
             //random value from 1 to 100
             int r = rand() % 100;
+            int r2 = rand() % 100;
             
             //cast random value to double and get fraction between 0 and 1, then subtract 0.5
             //to get in range -0.5 to 0.5
-            double rand = ((((double)r)/100.0) -0.5);
+            double dx = ((((double)r)/1000.0) -0.05);
+            double dy = ((((double)r2)/1000.0) -0.05);
             
             //create temporary ray
             Rayd tempRay;
@@ -232,16 +234,16 @@ Color3d RayFile::getColor(Rayd theRay, int rDepth)
             //set direction to be same as current ray
             tempRay.setDir(v);
             
-            //set position to be iCoordinate + offset
-            tempRay.setPos(intersectionInfo.iCoordinate+rand);
+            //set position to be position + offset
+            tempRay.setPos(theRay.getPos()+Point3d(dx,dy,0));
             
             //add to cumulative color
             cumulativeColor += getColor(tempRay, 0);
         }
         //set color equal to cumulative over number of rays cast
-        color = cumulativeColor/options->jitter;
+        cumulativeColor /=  (double) (options->jitter + 1);
+        color = cumulativeColor;
     }
-     
     
     color.clampTo(0,1);
 
